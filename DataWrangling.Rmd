@@ -1,0 +1,30 @@
+---
+title: "DataWrangling"
+author: "gzy"
+date: "2024-04-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(sf)
+library(spdep)
+library(caret)
+library(ckanr)
+library(FNN)
+library(grid)
+library(gridExtra)
+library(ggcorrplot) 
+library(corrr)   
+library(kableExtra)
+library(jtools)    
+library(ggstance) 
+library(ggpubr)
+library(broom.mixed) 
+library(RColorBrewer)
+
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
