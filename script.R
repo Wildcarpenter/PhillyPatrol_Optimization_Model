@@ -20,6 +20,7 @@ library(ggpubr)
 library(broom.mixed) 
 library(RColorBrewer)
 library(ggplot2)
+library(lubridate)
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -103,3 +104,25 @@ ggplot() +
   scale_fill_gradient(low = "cornsilk", high = "skyblue4", name = "Density") +
   labs(title = "Density of Crime Severity, Philadelphia") +
   theme_void()
+
+# TIMELINE
+
+# Create a new column with the time frame
+crime.weighted$time_frame <- cut(
+  crime.weighted$hour,
+  breaks = c(0, 4, 8, 12, 16, 20, 24),
+  labels = c("24:00-4:00", "4:00-8:00", "8-12:00", "12:00-16:00", "16:00-20:00", "20:00-24:00"),
+  include.lowest = TRUE,
+  right = FALSE
+)
+
+# aggregate data by the time frame
+time_frame_data <- crime.weighted %>%
+  group_by(time_frame) %>%
+  summarise(count = n()) # Replace with the summary functions you need
+
+list_of_time_frames <- split(crime.weighted, crime.weighted$time_frame)
+
+
+#OUTPUT
+st_write(crime.weighted, "C:/Users/25077/Desktop/MUSA 695_Spatial Optimization/Final_Project/PhillyPatrol_Optimization_Model/output_weighted/crime_weighted.shp")
