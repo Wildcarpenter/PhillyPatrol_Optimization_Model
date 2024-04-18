@@ -31,17 +31,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 get the crime data (2022-now)
+https://opendataphilly.org/datasets/crime-incidents/
+
 
 ```{r read data}
 
-crime <- 
-  read.csv(file.path("C:/Users/25077/Desktop/MUSA 695_Spatial Optimization/Final_Project/crime_Points.csv"))
-
-crime.sf <- crime %>%
-  filter(!is.na(lat) & !is.na(lng)) %>% 
-  st_as_sf(coords = c("lat", "lng"), crs = 4326, agr = "constant") %>%
-  st_transform(crs = 3364) %>% #Pennsylvania South State Plane_in meters. 
-  select(cartodb_id, geometry, objectid, dc_dist, psa, dispatch_date_time, hour, text_general_code)
+crime <- st_read("C:/Users/25077/Desktop/crime_data/crime.shp") %>%
+  st_transform(crs = st_crs(2272), check = TRUE)
 
 ```
 
@@ -57,6 +53,9 @@ crime.sf %>%
   kable_styling()
 
 ```
+https://cortezdefense.com/federal-classification-of-crimes/#:~:text=Federal%20crimes%20are%20classified%20by,carries%20the%20most%20severe%20punishment.
+
+based on the federal classification of the crime to aggregate the data to varies types and assign corresponding values to each crime.
 
 ```{r crime type weighted}
 
@@ -89,5 +88,13 @@ crime.sf.weighted <- crime.sf %>%
     TRUE ~ NA_real_
   ))
 
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = crime.sf.weighted, aes(colour = crime_severity), 
+          show.legend = "point", size = .25) +
+  labs(title="crime severity, Philadelphia") +
+  theme_void()
 ```
 
