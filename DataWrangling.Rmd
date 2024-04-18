@@ -9,6 +9,8 @@ output: html_document
 
 library(tidyverse)
 library(sf)
+library(knitr)
+library(dplyr)
 library(spdep)
 library(caret)
 library(ckanr)
@@ -26,5 +28,66 @@ library(RColorBrewer)
 
 
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+get the crime data (2022-now)
+
+```{r read data}
+
+crime <- 
+  read.csv(file.path("C:/Users/25077/Desktop/MUSA 695_Spatial Optimization/Final_Project/crime_Points.csv"))
+
+crime.sf <- crime %>%
+  filter(!is.na(lat) & !is.na(lng)) %>% 
+  st_as_sf(coords = c("lat", "lng"), crs = 4326, agr = "constant") %>%
+  st_transform(crs = 3364) %>% #Pennsylvania South State Plane_in meters. 
+  select(cartodb_id, geometry, objectid, dc_dist, psa, dispatch_date_time, hour, text_general_code)
+
+```
+
+
+```{r crime type preview}
+
+crime.sf %>%
+  group_by(text_general_code) %>%
+  summarize(count = n()) %>%
+  slice_max(order_by = count, n = 10) %>% # This replaces top_n()
+  ungroup() %>%
+  kable() %>%
+  kable_styling()
+
+```
+
+```{r crime type weighted}
+
+
+crime.sf <- crime.sf %>%
+  mutate(federal_category = case_when(
+    text_general_code %in% c("Thefts", "Theft from Vehicle", "Motor Vehicle Theft") ~ "Grade E Felony",
+    text_general_code %in% c("Other Assaults") ~ "Class A Misdemeanor",
+    text_general_code %in% c("Vandalism/Criminal Mischief") ~ "Class B Misdemeanor",
+    text_general_code %in% c("Fraud") ~ "Grade D Felony",
+    text_general_code %in% c("Aggravated Assault No Firearm") ~ "Grade C Felony",
+    text_general_code %in% c("Aggravated Assault Firearm") ~ "Grade B Felony",
+    text_general_code %in% c("Burglary Residential") ~ "Grade D Felony",
+    text_general_code %in% c("Homicide - Criminal") ~ "Grade A Felony",
+    TRUE ~ "Unclassified"  
+  ))
+
+crime.sf.weighted <- crime.sf %>%
+  mutate(crime_severity = case_when(
+    federal_category == "Grade A Felony" ~ 7,
+    federal_category == "Grade B Felony" ~ 6,
+    federal_category == "Grade C Felony" ~ 5,
+    federal_category == "Grade D Felony" ~ 4,
+    federal_category == "Grade E Felony" ~ 3,
+    federal_category == "Class A Misdemeanor" ~ 2,
+    federal_category == "Class B Misdemeanor" ~ 1.5,
+    federal_category == "Class C Misdemeanor" ~ 1,
+    federal_category == "Infraction" ~ 0.5,
+    federal_category == "Unclassified" ~ 0.5,
+    TRUE ~ NA_real_
+  ))
+
 ```
 
