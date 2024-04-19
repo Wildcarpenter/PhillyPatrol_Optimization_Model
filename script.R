@@ -116,13 +116,6 @@ crime.weighted$time_frame <- cut(
   right = FALSE
 )
 
-# aggregate data by the time frame
-time_frame_data <- crime.weighted %>%
-  group_by(time_frame) %>%
-  summarise(count = n()) # Replace with the summary functions you need
-
-list_of_time_frames <- split(crime.weighted, crime.weighted$time_frame)
-
 
 #OUTPUT
 st_write(crime.weighted, "C:/Users/25077/Desktop/MUSA 695_Spatial Optimization/Final_Project/PhillyPatrol_Optimization_Model/output_weighted/crime_weighted.shp")
