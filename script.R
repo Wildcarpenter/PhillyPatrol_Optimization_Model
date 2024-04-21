@@ -28,10 +28,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ## get the crime data (2022-now)
 ## https://opendataphilly.org/datasets/crime-incidents/
 
-crime <- st_read("C:/Users/25077/Desktop/MUSA 695_Spatial Optimization/Final_Project/PhillyPatrol_Optimization_Model/crime_data/crime.shp") %>%
+crime <- st_read("/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/crime_data/crime.shp") %>%
   st_transform(crs = st_crs(2272), check = TRUE)
 
-boundary <- st_read("C:/Users/25077/Desktop/MUSA 695_Spatial Optimization/Final_Project/PhillyPatrol_Optimization_Model/Census_Tracts_2010.geojson") %>%
+boundary <- st_read("/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/Census_Tracts_2010.geojson") %>%
   st_transform(crs = st_crs(2272), check = TRUE)
 
 # WEIGHT
@@ -118,4 +118,4 @@ crime.weighted$time_frame <- cut(
 
 
 #OUTPUT
-st_write(crime.weighted, "C:/Users/25077/Desktop/MUSA 695_Spatial Optimization/Final_Project/PhillyPatrol_Optimization_Model/output_weighted/crime_weighted.shp")
+st_write(crime.weighted, "/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/output/crime_weighted.shp")
