@@ -110,12 +110,13 @@ ggplot() +
 # Create a new column with the time frame
 crime.weighted$time_frame <- cut(
   crime.weighted$hour,
-  breaks = c(0, 4, 8, 12, 16, 20, 24),
-  labels = c("24:00-4:00", "4:00-8:00", "8-12:00", "12:00-16:00", "16:00-20:00", "20:00-24:00"),
+  breaks = c(0, 8, 16, 24),
+  labels = c("0:00-8:00", "8:00-16:00", "16:00-24:00"),
   include.lowest = TRUE,
-  right = FALSE
-)
+  right = FALSE)
 
+crime.weighted <- crime.weighted %>%
+  relocate(hour, .before = time_frame)
 
 #OUTPUT
 st_write(crime.weighted, "/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/output/crime_weighted.shp")
