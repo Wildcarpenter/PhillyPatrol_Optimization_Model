@@ -118,5 +118,20 @@ crime.weighted$time_frame <- cut(
 crime.weighted <- crime.weighted %>%
   relocate(hour, .before = time_frame)
 
+crime0 <- crime.weighted %>%
+  filter(time_frame == "0:00-8:00") %>%
+  sample_n(8000)
+
+crime8 <- crime.weighted %>%
+  filter(time_frame == "8:00-16:00") %>%
+  sample_n(8000)
+
+crime16 <- crime.weighted %>%
+  filter(time_frame == "16:00-24:00") %>%
+  sample_n(8000)
+
 #OUTPUT
 st_write(crime.weighted, "/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/output/crime_weighted.shp")
+st_write(crime0, "/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/output/crime_0-8.shp")
+st_write(crime8, "/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/output/crime_8-16.shp")
+st_write(crime16, "/Users/yaohanxu/Documents/GitHub/PhillyPatrol_Optimization_Model/output/crime_16-24.shp")
